@@ -1,0 +1,28 @@
+name: Sync Docker Image to Docker Hub
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Pull source image
+        run: docker pull jonnyan404/x-tunnel:20260326
+
+      - name: Tag image
+        run: |
+          docker tag jonnyan404/x-tunnel:20260326 ${{ secrets.DOCKERHUB_USERNAME }}/x-tunnel:20260326
+          docker tag jonnyan404/x-tunnel:20260326 ${{ secrets.DOCKERHUB_USERNAME }}/x-tunnel:latest
+
+      - name: Push image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/x-tunnel:20260326
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/x-tunnel:latest
